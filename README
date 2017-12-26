@@ -1,8 +1,11 @@
+Simple home automation api for different kind of sensors around the house
+
+
 nginx + uwsgi + flask + python3.6
 
-- python api.py
-- wsgi.py
-- uwsgi --socket 0.0.0.0:8000 --protocol=http -w wsgi
+
+List of commands for environment (reminder):
+
 - systemd config /etc/systemd/system/api.service
 - systemctl service start api
 - systemctl service start nginx
