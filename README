@@ -9,5 +9,7 @@ List of commands for environment (reminder):
 - systemd config /etc/systemd/system/api.service
 - systemctl service start api
 - systemctl service start nginx
+- systemctl service enable api
+- systemctl service enable nginx
 - chmod -a -G pi www-data
 - chmod 710 /home/pi
