@@ -1,0 +1,10 @@
+nginx + uwsgi + flask + python3.6
+
+- python api.py
+- wsgi.py
+- uwsgi --socket 0.0.0.0:8000 --protocol=http -w wsgi
+- systemd config /etc/systemd/system/api.service
+- systemctl service start api
+- systemctl service start nginx
+- chmod -a -G pi www-data
+- chmod 710 /home/pi

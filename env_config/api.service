@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI server instance to serve api project
+
+[Service]
+WorkingDirectory=/home/pi/home_api
+ExecStart=/home/pi/.virtualenvs/py3.6/bin/uwsgi --ini settings.ini
+Environment="PATH=/home/pi/.virtualenvs/py3.6/bin"
+User=pi
+Group=www-data
+
+
+[Install]
+WantedBy=multi-user.target
