@@ -1,11 +1,22 @@
 from flask import Flask
-application = Flask(__name__)
+from flask_restful import Resource, Api
+from db import get_plant_data, get_forecast_data
 
-@application.route("/")
-def hello():
-    return "<h1> Hello World! </h1>"
+application = Flask(__name__)
+api = Api(application)
+
+
+class Plants(Resource):
+    def get(self):
+        result = {}
+        result['forecast'] = get_forecast_data()
+        result['plants'] = get_plant_data()
+        return result
+
+api.add_resource(Plants, "/")
+
 
 if __name__ == "__main__":
-    application.run(host='0.0.0.0')
+    application.run(debug=True)
 
 
