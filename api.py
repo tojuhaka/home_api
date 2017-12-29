@@ -27,7 +27,7 @@ class Home(Resource):
 
 class Coins(Resource):
 
-    #@auth.login_required
+    @auth.login_required
     def get(self):
         profit_data = get_crypto_data()
         seligson_data = get_seligson_data()
