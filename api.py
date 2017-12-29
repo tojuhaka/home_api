@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, Api
 from flask_httpauth import HTTPBasicAuth
-from db import get_plant_data, get_forecast_data, get_crypto_data, get_spent_amount
+from db import get_plant_data, get_forecast_data, get_crypto_data, get_coin_spent_amount, get_seligson_data, get_seligson_spent_amount
 
 application = Flask(__name__)
 api = Api(application)
@@ -27,16 +27,32 @@ class Home(Resource):
 
 class Coins(Resource):
 
-    @auth.login_required
+    #@auth.login_required
     def get(self):
         profit_data = get_crypto_data()
-        amount = sum([i['amount'] for i in profit_data])
-        spent = get_spent_amount()
+        seligson_data = get_seligson_data()
+
+        coin_amount = sum([i['amount'] for i in profit_data])
+        seligson_amount = sum(i['amount'] for i in seligson_data)
+
+        coin_spent = get_coin_spent_amount()
+        seligson_spent = get_seligson_spent_amount()
+
+        coins = {
+            'profit': ((coin_amount - coin_spent) / coin_spent) * 100 ,
+            'current_amount': coin_amount,
+            'details': profit_data
+        }
+
+        seligson = {
+            'profit': ((seligson_amount - seligson_spent) / seligson_spent) * 100 ,
+            'current_amount': seligson_amount,
+            'details': seligson_data
+        }
 
         return {
-            'profit': ((amount - spent) / spent) * 100 ,
-            'current_amount': amount,
-            'detail': get_crypto_data()
+            'seligson': seligson,
+            'coins': coins
         }
 
 api.add_resource(Home, "/")

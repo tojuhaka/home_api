@@ -1,6 +1,7 @@
 import urllib
 import xmltodict
 import json
+from bs4 import BeautifulSoup
 from collections import defaultdict
 from datetime import datetime
 
@@ -78,12 +79,18 @@ def get_forecast_data() -> list:
 
 
 def get_holdings():
+    # load .json files once on each request, 
+    # now it's done multiple times
     with open('/home/pi/holdings.json') as f:
         return json.load(f)
 
-def get_spent_amount():
+def get_coin_spent_amount():
     with open('/home/pi/holdings.json') as f:
-        return json.load(f)['spent_eur']
+        return json.load(f)['coin_spent_eur']
+
+def get_seligson_spent_amount():
+    with open('/home/pi/holdings.json') as f:
+        return json.load(f)['seligson_spent_eur']
 
 def filter_crypto(data, holding_amount):
     return {
@@ -99,3 +106,33 @@ def get_crypto_data():
     # filter out coin data based on holdings file
     holdings = get_holdings()
     return [filter_crypto(coin, holdings[coin['id']]) for coin in data if coin['id'] in holdings.keys()]
+
+
+def get_seligson_data():
+    holdings = get_holdings()
+    url = "https://seligson.fi/suomi/rahastot/FundValues_FI.html"
+    xml_data = urllib.request.urlopen(url).read()
+    data = BeautifulSoup(xml_data, 'html.parser')
+
+    details = []
+    for content in data.select('.flink'):
+        row = content.parent.parent
+        label = row.select('a')[0].get_text()
+        price = row.select('.tabletext')[2].get_text().replace(',','.')
+        try:
+            amount = holdings[label]
+        except KeyError:
+            continue
+        value = float(price) * amount
+        details.append({'id': label, 'amount': value})
+    return details
+    current_amount = sum(i['amount'] for i in details)
+    return {
+        'current_amount': current_amount,
+        'details': details
+    }
+
+
+if __name__ == "__main__":
+    print(get_seligson_data())
+
