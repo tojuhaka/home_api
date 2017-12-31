@@ -1,3 +1,4 @@
+import json
 from flask import Flask
 from flask_restful import Resource, Api
 from flask_httpauth import HTTPBasicAuth
@@ -7,12 +8,12 @@ application = Flask(__name__)
 api = Api(application)
 auth = HTTPBasicAuth()
 
-users = {
-    "test": "test"
-}
-
 @auth.get_password
 def get_pw(username):
+    users = {}
+    with open('/home/pi/users.json') as f:
+        users = json.load(f)
+
     if username in users:
         return users.get(username)
     return None
@@ -55,8 +56,21 @@ class Coins(Resource):
             'coins': coins
         }
 
+    def options(self):
+        result = {}
+        return result
+
+@application.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'null')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET')
+    return response
+
+
 api.add_resource(Home, "/")
 api.add_resource(Coins, "/coins")
+
 
 
 if __name__ == "__main__":
