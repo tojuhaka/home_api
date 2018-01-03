@@ -99,7 +99,7 @@ def filter_crypto(data, holding_amount):
     }
 
 def get_crypto_data():
-    url = "https://api.coinmarketcap.com/v1/ticker/?convert=EUR&limit=100"
+    url = "https://api.coinmarketcap.com/v1/ticker/?convert=EUR&limit=259"
     json_data = urllib.request.urlopen(url).read()
     data = json.loads(json_data)
 
